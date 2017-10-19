@@ -4,12 +4,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.fjd.fchatandroid.data.DataProvider;
+import com.fjd.fchatandroid.model.Conversation;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
+
+    private List<Conversation> conversations = DataProvider.conversations;
+    private List<String> conversationNames = new ArrayList<>();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -26,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_notifications:
                     mTextMessage.setText(R.string.title_notifications);
                     return true;
+                case R.id.navigation_me:
+                    //Intent intent = new Intent(this,LoginActivity.class)
+                    mTextMessage.setText(R.string.title_me);
+                    return true;
             }
             return false;
         }
@@ -40,6 +57,21 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        for(Conversation conversation:conversations){
+            conversationNames.add(conversation.getName());
+        }
+
+        Collections.sort(conversationNames);
+
+//        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+//                this,android.R.layout.simple_list_item_1,conversationNames
+//
+//        );
+        ConversationItemAdapter adapter = new ConversationItemAdapter(this,conversations);
+        RecyclerView listView = (RecyclerView)findViewById(R.id.rvConversations);
+        listView.setAdapter(adapter);
+
     }
 
 }
