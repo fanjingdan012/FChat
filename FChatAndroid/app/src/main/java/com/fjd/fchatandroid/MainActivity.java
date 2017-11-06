@@ -1,5 +1,8 @@
 package com.fjd.fchatandroid;
 
+import android.app.Instrumentation;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -9,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fjd.fchatandroid.data.DataProvider;
 import com.fjd.fchatandroid.model.Conversation;
@@ -19,12 +23,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String MY_GLOBAL_PREFS = "my_global_prefs";
     private TextView mTextMessage;
 
     private List<Conversation> conversations = DataProvider.conversations;
     private List<String> conversationNames = new ArrayList<>();
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+    private static final Integer SIGNIN_REQUEST = 1002;
+
+    public BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -40,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_notifications);
                     return true;
                 case R.id.navigation_me:
-                    //Intent intent = new Intent(this,LoginActivity.class)
+                    startLoginActivity();
                     mTextMessage.setText(R.string.title_me);
                     return true;
             }
@@ -48,6 +55,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
     };
+
+    public void startLoginActivity(){
+        Intent intent = new Intent(this,LoginActivity.class);
+        startActivityForResult(intent,SIGNIN_REQUEST);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,Intent data){
+        super.onActivityResult(requestCode,resultCode,data);
+        if(resultCode == RESULT_OK &&requestCode == SIGNIN_REQUEST){
+            String email = data.getStringExtra(LoginActivity.EMAIL_KEY);
+            Toast.makeText(this,"You login as "+email,Toast.LENGTH_SHORT).show();
+            SharedPreferences.Editor editor = getSharedPreferences(MY_GLOBAL_PREFS,MODE_PRIVATE).edit();
+            editor.putString(LoginActivity.EMAIL_KEY,email);
+            editor.apply();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

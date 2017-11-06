@@ -3,6 +3,7 @@ package com.fjd.fchatandroid;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -51,6 +52,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
+    public static final String EMAIL_KEY = "email";
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -92,6 +94,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        SharedPreferences prefs = getSharedPreferences(MainActivity.MY_GLOBAL_PREFS,MODE_PRIVATE);
+        String email = prefs.getString(EMAIL_KEY,"");
+        if(!TextUtils.isEmpty(email)){
+            mEmailView.setText(email);
+        }
     }
 
     private void populateAutoComplete() {
