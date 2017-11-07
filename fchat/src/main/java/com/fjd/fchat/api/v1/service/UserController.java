@@ -2,6 +2,8 @@ package com.fjd.fchat.api.v1.service;
 
 import com.fjd.fchat.bo.User;
 import com.fjd.fchat.repo.UserRepository;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value={"/Users"})
+@Api(value="Users", description = "Data service operating users", tags=("Users"))
 public class UserController {
     @Autowired
     private UserRepository userRepository;
@@ -40,6 +43,7 @@ public class UserController {
 
 
     @RequestMapping ( method= RequestMethod.GET)
+    @ApiOperation(value = "Get all users",notes = "Get all users in the system",nickname = "getUsers")
     public @ResponseBody
     List<User> list() {
         // This returns a JSON or XML with the users
